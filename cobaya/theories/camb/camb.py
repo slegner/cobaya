@@ -258,6 +258,7 @@ class CAMB(BoltzmannBase):
 
     file_base_name = 'camb'
     external_primordial_pk: bool
+    external_wa: bool
     camb: Any
     ignore_obsolete: bool
 
