@@ -256,7 +256,7 @@ class polychord(Sampler):
 
     def dump_paramnames(self, prefix):
         labels = self.model.parameterization.labels()
-        with open(prefix + ".paramnames", "w", encoding="utf-8-sig") as f_paramnames:
+        with open(prefix + ".paramnames", "w") as f_paramnames:
             for p in self.model.parameterization.sampled_params():
                 f_paramnames.write("%s\t%s\n" % (p, labels.get(p, "")))
             for p in self.model.parameterization.derived_params():
