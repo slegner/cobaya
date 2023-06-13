@@ -825,7 +825,7 @@ class CAMB(BoltzmannBase):
         self.log.debug("Setting parameters: %r and %r", args, self.extra_args)
         try:
             # put dark energy in here
-            # DarkEnergy has to be set before cosmology is theta is used instead of H0
+            # DarkEnergy has to be set before cosmology if theta is used instead of H0
             if self.external_wa:
                 de = self.provider.get_dark_energy()
                 a, w = de["a"], de["w"]
