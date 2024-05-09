@@ -1,6 +1,58 @@
-## 3.X.Y – YYYY-MM-DD
+## 3.x
 
 ### Cosmology
+- Added DESI 1yr BAO data, Pantheon Plus and DESY5 SN (thanks DESI team, @WillMatt4 and @rodri981)
+
+## 3.5 – 2024-02-16
+
+### General
+
+- Updated UGE sample job submission template (for cobaya-job-run and cobaya-grid-run)
+- Clarify log feedback when using oversample_thin
+- Fixed #345, #346, #347, #348
+
+### Grid scripts
+- Support for running grids of models, including grid getdist, PDF tables, importance sampling, minimization (almost all features of CosmoMC grid now available in Cobaya). See the new doc pages.
+
+### Minimization
+- Support for iminuit minimizer and getting best-fits for all mpi runs (#332, thanks @ggalloni)
+- Support for minimization with an importance-sampled input yaml config
+
+## 3.4.1 – 2023-10-12
+
+### General
+
+- Fixed a packaging bug after migration to `pyproject.toml`
+
+### Cosmology
+
+#### CLASS
+
+- Min version update to 3.2.1 (solves #305; thanks to the CLASS developers)
+
+## 3.4 – 2023-10-11
+
+### General
+
+- Python 3.12 support (removed all dependence on distutils)
+- Improved `.products()` method for samplers (MCMC and PolyChord) and post-processing: samples can now retrieved simultaneously for all MPI processes, and converted to GetDist. Also added `.samples()` methods to retrieve just the samples.
+
+### Collections
+
+- Created a general `load_samples` function to load Cobaya results natively or as GetDist MCSamples.
+- Collections are now aware of whether they are part of a parallel batch, and warn if trying to reweight/detemper individually (fixes #321).
+- Fixed a bug with overzealous checks when loading samples (#306, thanks @mishakb for reporting).
+
+### MCMC
+
+- Fixed a bug with mpi runs partly stalling when run with many chains (#308, thanks @vivianmiranda @lukashergt for reporting and testing).
+- When `oversample_thin` is used, avg thinned weights now reported instead of acceptance rate (#310, thanks @vivianmiranda for reporting)
+
+### Cosmology
+
+#### BAO
+
+- Added 1-d grid LSS likelihood and BAO-only ELG and QSO (PR #266; thanks @msyriac)
 
 #### CLASS
 

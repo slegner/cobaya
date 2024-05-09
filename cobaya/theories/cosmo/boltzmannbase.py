@@ -31,7 +31,7 @@ class BoltzmannBase(Theory):
 
         # Dict of named tuples to collect requirements and computation methods
         self.collectors = {}
-        # Additional input parameters to pass to CAMB, and attributes to set_ manually
+        # Additional input parameters (e.g. to pass to setter function, to set as attr...)
         self.extra_args = deepcopy_where_possible(self.extra_args) or {}
         self._must_provide = {}
 
@@ -544,16 +544,16 @@ class BoltzmannBase(Theory):
         """
         return self._get_z_dependent("fsigma8", z)
 
-    def get_auto_covmat(self, params_info, likes_info, random_state=None):
+    def get_auto_covmat(self, params_info, likes_info):
         r"""
         Tries to get match to a database of existing covariance matrix files for the
         current model and data.
 
         ``params_info`` should contain preferably the slow parameters only.
         """
-        from cobaya.cosmo_input import get_best_covmat_ext
-        return get_best_covmat_ext(self.packages_path, params_info, likes_info,
-                                   random_state)
+        from cobaya.cosmo_input import get_best_covmat_ext, get_covmat_package_folders
+        return get_best_covmat_ext(get_covmat_package_folders(self.packages_path),
+                                   params_info, likes_info)
 
 
 class PowerSpectrumInterpolator(RectBivariateSpline):

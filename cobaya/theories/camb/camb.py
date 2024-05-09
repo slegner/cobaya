@@ -328,8 +328,8 @@ class CAMB(BoltzmannBase):
                               pars.defaults):
                 if arg in self.extra_args:
                     args[arg] = self.extra_args.pop(arg)
-                elif (isinstance(v,
-                                 numbers.Number) or v is None) and 'version' not in arg:
+                elif (isinstance(v, numbers.Number)
+                      or v is None) and 'version' not in arg:
                     params.append(arg)
         return args, params
 
@@ -550,6 +550,8 @@ class CAMB(BoltzmannBase):
         if self.external_primordial_pk and self.needs_perts:
             must_provide['primordial_scalar_pk'] = {'lmax': self.extra_args.get("lmax"),
                                                     'kmax': self.extra_args.get('kmax')}
+            if self.extra_args.get('WantTensors'):
+                self.extra_attrs['WantTensors'] = True
             if self.extra_attrs.get('WantTensors'):
                 must_provide['primordial_tensor_pk'] = {'lmax':
                     self.extra_attrs.get(

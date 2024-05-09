@@ -338,7 +338,7 @@ class Model(HasLogger):
         return logprior
 
     def _loglikes_input_params(
-            self, input_params: Optional[Dict[str, float]] = None,
+            self, input_params: ParamValuesDict,
             return_derived: bool = True, return_output_params: bool = False,
             as_dict: bool = False, make_finite: bool = False, cached: bool = True
     ) -> Union[np.ndarray, Dict[str, float], Tuple[np.ndarray, np.ndarray],
@@ -1236,7 +1236,7 @@ class Model(HasLogger):
             raise LoggedError(
                 self.log, "Manual blocking: unknown parameters: %r", unknown)
         oversampling_factors = np.array(oversampling_factors)
-        if (oversampling_factors != np.sort(oversampling_factors)).all():
+        if np.all(oversampling_factors != np.sort(oversampling_factors)):
             self.log.warning(
                 "Manual blocking: speed-blocking *apparently* non-optimal: "
                 "oversampling factors must go from small (slow) to large (fast).")
@@ -1252,7 +1252,7 @@ class Model(HasLogger):
         for theory in self.components:
             theory.set_cache_size(n_states)
 
-    def get_auto_covmat(self, params_info=None, random_state=None):
+    def get_auto_covmat(self, params_info=None):
         """
         Tries to get an automatic covariance matrix for the current model and data.
 
@@ -1264,8 +1264,7 @@ class Model(HasLogger):
         try:
             for theory in self.theory.values():
                 if hasattr(theory, 'get_auto_covmat'):
-                    return theory.get_auto_covmat(
-                        params_info, self.info()["likelihood"], random_state=random_state)
+                    return theory.get_auto_covmat(params_info, self.info()["likelihood"])
         except Exception as e:
             self.log.warning("Something went wrong when looking for a covmat: %r", str(e))
             return None
@@ -1313,7 +1312,7 @@ class Model(HasLogger):
 
 
 class DummyModel:
-    """Dummy class for loading chains for post processing."""
+    """Dummy class for loading chains (e.g. for post processing)."""
 
     def __init__(self, info_params, info_likelihood, info_prior=None):
         self.parameterization = Parameterization(info_params, ignore_unused_sampled=True)
@@ -1345,16 +1344,11 @@ def get_model(info_or_yaml_or_file: Union[InputDict, str, os.PathLike],
     flags = {packages_path_input: packages_path, "debug": debug,
              "stop_at_error": stop_at_error}
     info = load_info_overrides(info_or_yaml_or_file, override or {}, **flags)
-    # MARKED FOR DEPRECATION IN v3.2
-    if info.get("debug_file"):  # type: ignore
-        raise LoggedError("'debug_file' has been deprecated. If you want to "
-                          "save the debug output to a file, use 'debug: [filename]'.")
-    # END OF DEPRECATION BLOCK
     logger_setup(info.get("debug"))
     # Inform about ignored info keys
     ignored_info = []
     for k in list(info):
-        if k not in {"params", "likelihood", "prior", "theory", packages_path_input,
+        if k not in {"params", "likelihood", "prior", "theory", "packages_path",
                      "timing", "stop_at_error", "auto_params", "debug"}:
             value = info.pop(k)  # type: ignore
             if value is not None and (not isinstance(value, Mapping) or value):
@@ -1370,6 +1364,6 @@ def get_model(info_or_yaml_or_file: Union[InputDict, str, os.PathLike],
     # Initialize the parameters and posterior
     return Model(updated_info["params"], updated_info["likelihood"],
                  updated_info.get("prior"), updated_info.get("theory"),
-                 packages_path=info.get(packages_path_input),
+                 packages_path=info.get("packages_path"),
                  timing=updated_info.get("timing"),
                  stop_at_error=info.get("stop_at_error", False))

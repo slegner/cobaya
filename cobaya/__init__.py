@@ -6,6 +6,7 @@ from cobaya.model import get_model
 from cobaya.typing import InputDict, PostDict
 from cobaya.log import LoggedError
 from cobaya.post import post
+from cobaya.output import load_samples
 
 
 if sys.version_info < (3, 8):
@@ -14,7 +15,7 @@ if sys.version_info < (3, 8):
 
 
 __author__ = "Jesus Torrado and Antony Lewis"
-__version__ = "3.3.2"
+__version__ = "3.5"
 __obsolete__ = False
-__year__ = "2023"
+__year__ = "2024"
 __url__ = "https://cobaya.readthedocs.io"

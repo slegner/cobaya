@@ -15,7 +15,6 @@ import traceback
 import shutil
 import tempfile
 import logging
-from copy import deepcopy
 from itertools import chain
 import importlib
 from typing import List, Mapping, Union
@@ -70,9 +69,10 @@ def do_package_install(component: str, package_install: Union[InfoDict, str],
         cwd = os.path.join(full_code_path, directory or component_root)
         if not download_file(url, cwd, logger=logger):
             return False
-        paths = find_with_regexp('setup\\.py', cwd, True)
-        if not paths:
-            raise LoggedError(logger, "No setup.py found in %s for %s", cwd, component)
+        if not (paths := find_with_regexp('pyproject\\.toml', cwd, True)
+                         or find_with_regexp('setup\\.py', cwd, True)):
+            raise LoggedError(logger, "No setup.py or pyproject.toml "
+                                      "found in %s for %s", cwd, component)
         cwd = os.path.dirname(paths[0])
         package = '.'
 
@@ -120,9 +120,7 @@ def install(*infos, **kwargs):
              if isinstance(info, str) and info.split('.')[-1] in Extension.yamls
              else info for info in infos]
     infos_not_single_names = [info for info in infos if isinstance(info, Mapping)]
-    if not path:
-        path = resolve_packages_path(*infos_not_single_names)
-    if not path:
+    if not (path := path or resolve_packages_path(*infos_not_single_names)):
         raise LoggedError(
             logger, ("No 'path' argument given, and none could be found in input infos "
                      "(as %r), the %r env variable or the config file. "
@@ -529,10 +527,7 @@ def pip_install(packages, upgrade=False, logger=None, options=(), **kwargs):
     cmd += list(options)
     # Assume that if the user has installed Cobaya on the system-wide Python,
     # then it is OK to overwrite system packages:
-    kwargs = deepcopy(kwargs)
-    if "env" not in kwargs:
-        kwargs["env"] = {}
-    kwargs["env"].update({"PIP_BREAK_SYSTEM_PACKAGES": "1"})
+    kwargs["env"] = dict(kwargs.get("env", os.environ), PIP_BREAK_SYSTEM_PACKAGES="1")
     res = subprocess.call(cmd + packages, **kwargs)
     if res:
         msg = f"pip: error installing packages '{packages}'"

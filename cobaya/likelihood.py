@@ -58,7 +58,6 @@ class LikelihoodInterface:
         :return:  log likelihood from the current state as a scalar
         """
         value = self.current_state["logp"]
-        # Unfortunately, numpy arrays are not derived from Sequence, so the test is ugly
         if hasattr(value, "__len__"):
             value = value[0]
         return value
@@ -95,17 +94,6 @@ class Likelihood(Theory, LikelihoodInterface):
         super().__init__(info, name=name, timing=timing,
                          packages_path=packages_path, initialize=initialize,
                          standalone=standalone)
-
-    # MARKED FOR DEPRECATION IN v3.3
-    @property
-    def theory(self):
-        self.log.warning(
-            "The 'theory' attribute of likelihoods will be deprecated soon. "
-            "Please use the equivalent 'provider' attribute instead."
-        )
-        # BEHAVIOUR TO BE REPLACED BY AN ERROR
-        return self.provider
-        # END OF DEPRECATION BLOCK
 
     def logp(self, **params_values):
         """
