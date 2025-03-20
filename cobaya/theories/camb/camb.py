@@ -848,9 +848,9 @@ class CAMB(BoltzmannBase):
                     self.log.debug(f"wa table set! {params.DarkEnergy.use_tabulated_w}")
                     base_args.pop("dark_energy_model")
                 if self.external_rhopa:
-                    params.set_dark_energy_rho_p_a(**darkenergypressure(a_rho,rho,a_p,p, **self.extra_args))
-                    self.log.debug(f"rhopa values: {darkenergypressure(a_rho,rho,a_p,p, **self.extra_args)}")
-                    self.log.debug(f"rhopa table set!")
+                    params.set_dark_energy_rho_p_a(**darkenergypressure(a_rho, rho, a_p, p, **self.extra_args))
+                    self.log.debug(f"rhopa values: {darkenergypressure(a_rho, rho, a_p, p, **self.extra_args)}")
+                    self.log.debug("rhopa table set!")
                     base_args.pop("dark_energy_model")
                 params = self.camb.set_params(cp=params, **base_args)
 
@@ -1090,7 +1090,7 @@ class CambTransfers(HelperTheory):
             if self.non_linear_sources:
                 # only need time sources if non-linear lensing or other non-linear
                 # sources. Not needed just for non-linear PK.
-                self.log.debug(f"getting transfer function non-linear sources") #, {camb_params}
+                self.log.debug("getting transfer function non-linear sources") #, {camb_params}
                 results = self.camb.get_transfer_functions(camb_params,
                                                            only_time_sources=True)
             else:
@@ -1141,8 +1141,9 @@ def darkenergy(a, w, dark_energy_model, **kwargs):
         de_dict["dark_energy_model"] = dark_energy_model
     return de_dict
 
+
 def darkenergypressure(a_rho, rho, a_p, p,  dark_energy_model, **kwargs):
-    de_pressure_dict = {"a_rho": a_rho, "rho": rho,"a_p": a_p, "p": p }
+    de_pressure_dict = {"a_rho": a_rho, "rho": rho,"a_p": a_p, "p": p}
     if dark_energy_model:
         de_pressure_dict["dark_energy_model"] = dark_energy_model
     return de_pressure_dict
