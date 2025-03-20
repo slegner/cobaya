@@ -1143,7 +1143,7 @@ def darkenergy(a, w, dark_energy_model, **kwargs):
 
 
 def darkenergypressure(a_rho, rho, a_p, p,  dark_energy_model, **kwargs):
-    de_pressure_dict = {"a_rho": a_rho, "rho": rho,"a_p": a_p, "p": p}
+    de_pressure_dict = {"a_rho": a_rho, "rho": rho, "a_p": a_p, "p": p}
     if dark_energy_model:
         de_pressure_dict["dark_energy_model"] = dark_energy_model
     return de_pressure_dict
